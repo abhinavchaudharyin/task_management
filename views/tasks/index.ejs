@@ -1,0 +1,196 @@
+<%- include("../partials/header") %>
+
+<section class="page-heading">
+  <div>
+    <h1>Tasks</h1>
+    <p>Admins assign work. Members update assigned task status.</p>
+  </div>
+</section>
+
+<section class="panel filter-panel">
+  <form action="/tasks" method="get" class="filter-grid">
+    <label>
+      Search
+      <input type="search" name="q" value="<%= filters.q %>" placeholder="Task title or description">
+    </label>
+    <label>
+      Status
+      <select name="status">
+        <option value="">All statuses</option>
+        <% statuses.forEach((status) => { %>
+          <option value="<%= status %>" <%= filters.status === status ? "selected" : "" %>><%= status %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>
+      Project
+      <select name="project">
+        <option value="">All projects</option>
+        <% projects.forEach((project) => { %>
+          <option value="<%= project._id %>" <%= filters.project === project._id.toString() ? "selected" : "" %>><%= project.name %></option>
+        <% }) %>
+      </select>
+    </label>
+    <% if (currentUser.role === "admin") { %>
+      <label>
+        Assignee
+        <select name="assignee">
+          <option value="">All assignees</option>
+          <% users.forEach((user) => { %>
+            <option value="<%= user._id %>" <%= filters.assignee === user._id.toString() ? "selected" : "" %>><%= user.name %></option>
+          <% }) %>
+        </select>
+      </label>
+    <% } %>
+    <div class="filter-actions">
+      <button type="submit">Apply</button>
+      <a href="/tasks" class="button-link secondary-link">Reset</a>
+    </div>
+  </form>
+</section>
+
+<% if (currentUser.role === "admin") { %>
+  <section class="panel">
+    <h2>Create task</h2>
+    <form action="/tasks" method="post" class="form-grid">
+      <label>
+        Title
+        <input type="text" name="title" required>
+      </label>
+      <label>
+        Project
+        <select name="projectId" required>
+          <option value="">Select project</option>
+          <% projects.forEach((project) => { %>
+            <option value="<%= project._id %>"><%= project.name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>
+        Assign to
+        <select name="assignedTo" multiple required size="5">
+          <% users.forEach((user) => { %>
+            <option value="<%= user._id %>"><%= user.name %> (<%= user.email %>)</option>
+          <% }) %>
+        </select>
+        <span class="field-help">Hold Ctrl on Windows to select multiple users.</span>
+      </label>
+      <label>
+        Status
+        <select name="status">
+          <% statuses.forEach((status) => { %>
+            <option value="<%= status %>"><%= status %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>
+        Due date
+        <input type="date" name="dueDate" required>
+      </label>
+      <label class="full">
+        Description
+        <textarea name="description" rows="3"></textarea>
+      </label>
+      <button type="submit">Create task</button>
+    </form>
+  </section>
+<% } %>
+
+<section class="list">
+  <% if (!tasks.length) { %>
+    <p class="empty">No tasks yet.</p>
+  <% } %>
+
+  <% tasks.forEach((task) => { %>
+    <% const assignedUsers = Array.isArray(task.assignedTo) ? task.assignedTo : [task.assignedTo].filter(Boolean); %>
+    <article class="item-card">
+      <div class="item-main">
+        <h2><%= task.title %></h2>
+        <p><%= task.description || "No description" %></p>
+        <p class="muted">
+          Project:
+          <% if (task.project) { %>
+            <a href="/projects/<%= task.project._id %>"><%= task.project.name %></a>
+          <% } else { %>
+            Deleted project
+          <% } %>
+          |
+          Assigned to: <%= assignedUsers.length ? assignedUsers.map((user) => user.name).join(", ") : "Unknown" %> |
+          Due: <%= task.dueDate.toISOString().slice(0, 10) %>
+        </p>
+        <span class="status-pill status-<%= task.status.toLowerCase().replace(" ", "-") %>"><%= task.status %></span>
+      </div>
+      <div class="card-actions">
+        <% const canStartWork = currentUser.role === "admin" || assignedUsers.some((user) => user && user._id && user._id.toString() === currentUser._id.toString()); %>
+        <% if (canStartWork && task.status !== "Done") { %>
+          <form action="/tasks/<%= task._id %>/start" method="post">
+            <button type="submit">Start work</button>
+          </form>
+        <% } %>
+        <% if (currentUser.currentTask && currentUser.currentTask.toString && currentUser.currentTask.toString() === task._id.toString()) { %>
+          <form action="/tasks/work/stop" method="post">
+            <button type="submit" class="secondary-button">Stop work</button>
+          </form>
+        <% } %>
+        <form action="/tasks/<%= task._id %>/status" method="post" class="compact-form">
+          <select name="status">
+            <% statuses.forEach((status) => { %>
+              <option value="<%= status %>" <%= task.status === status ? "selected" : "" %>><%= status %></option>
+            <% }) %>
+          </select>
+          <button type="submit">Update</button>
+        </form>
+        <% if (currentUser.role === "admin") { %>
+          <details class="edit-details">
+            <summary>Edit task</summary>
+            <form action="/tasks/<%= task._id %>" method="post" class="compact-form edit-form">
+              <label>
+                Title
+                <input type="text" name="title" value="<%= task.title %>" required>
+              </label>
+              <label>
+                Project
+                <select name="projectId" required>
+                  <% projects.forEach((project) => { %>
+                    <option value="<%= project._id %>" <%= task.project && task.project._id.toString() === project._id.toString() ? "selected" : "" %>><%= project.name %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label>
+                Assign to
+                <select name="assignedTo" multiple required size="4">
+                  <% users.forEach((user) => { %>
+                    <% const isAssigned = assignedUsers.some((assignedUser) => assignedUser && assignedUser._id && assignedUser._id.toString() === user._id.toString()); %>
+                    <option value="<%= user._id %>" <%= isAssigned ? "selected" : "" %>><%= user.name %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label>
+                Status
+                <select name="status">
+                  <% statuses.forEach((status) => { %>
+                    <option value="<%= status %>" <%= task.status === status ? "selected" : "" %>><%= status %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label>
+                Due date
+                <input type="date" name="dueDate" value="<%= task.dueDate.toISOString().slice(0, 10) %>" required>
+              </label>
+              <label>
+                Description
+                <textarea name="description" rows="3"><%= task.description %></textarea>
+              </label>
+              <button type="submit">Save changes</button>
+            </form>
+          </details>
+          <form action="/tasks/<%= task._id %>/delete" method="post" onsubmit="return confirm('Delete this task?');">
+            <button type="submit" class="danger-button">Delete</button>
+          </form>
+        <% } %>
+      </div>
+    </article>
+  <% }) %>
+</section>
+
+<%- include("../partials/footer") %>

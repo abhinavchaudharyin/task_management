@@ -1,0 +1,41 @@
+<%- include("../partials/header") %>
+
+<section class="auth-shell">
+  <div class="auth-copy">
+    <span class="eyebrow">Team workspace</span>
+    <h1>Create a focused hub for project execution.</h1>
+    <p>Admins organize projects and assignments. Members get a clear task list and update progress fast.</p>
+  </div>
+  <div class="auth-panel">
+    <h1>Signup</h1>
+    <% if (error) { %>
+      <p class="alert"><%= error %></p>
+    <% } %>
+    <form action="/auth/signup" method="post" class="form-stack">
+      <label>
+        Name
+        <input type="text" name="name" value="<%= form.name || "" %>" required>
+      </label>
+      <label>
+        Email
+        <input type="email" name="email" value="<%= form.email || "" %>" required>
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" minlength="6" required>
+      </label>
+      <label>
+        Account type
+        <select name="requestedRole">
+          <option value="member" <%= form.requestedRole === "member" ? "selected" : "" %>>Member</option>
+          <option value="admin" <%= form.requestedRole === "admin" ? "selected" : "" %>>Admin</option>
+        </select>
+      </label>
+      <button type="submit">Create account</button>
+    </form>
+    <p class="muted">Members are active immediately. The first admin is approved automatically; later admin requests need approval from an existing admin.</p>
+    <p class="muted">Already have an account? <a href="/auth/login">Login</a>.</p>
+  </div>
+</section>
+
+<%- include("../partials/footer") %>

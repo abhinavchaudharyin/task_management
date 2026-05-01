@@ -1,0 +1,72 @@
+<%- include("../partials/header") %>
+
+<section class="page-heading">
+  <div>
+    <h1>Projects</h1>
+    <p>Admins can create projects and add members.</p>
+  </div>
+</section>
+
+<% if (currentUser.role === "admin") { %>
+  <section class="panel">
+    <h2>Create project</h2>
+    <form action="/projects" method="post" class="form-grid">
+      <label>
+        Name
+        <input type="text" name="name" required>
+      </label>
+      <label>
+        Description
+        <input type="text" name="description">
+      </label>
+      <button type="submit">Create</button>
+    </form>
+  </section>
+<% } %>
+
+<section class="list">
+  <% if (!projects.length) { %>
+    <p class="empty">No projects yet.</p>
+  <% } %>
+
+  <% projects.forEach((project) => { %>
+    <% const memberIds = project.members.map((member) => member._id.toString()); %>
+    <% const availableUsers = users.filter((user) => !memberIds.includes(user._id.toString())); %>
+    <article class="item-card">
+      <div class="item-main">
+        <h2><a href="/projects/<%= project._id %>"><%= project.name %></a></h2>
+        <p><%= project.description || "No description" %></p>
+        <p class="muted">Created by <%= project.createdBy ? project.createdBy.name : "Unknown" %></p>
+        <p class="muted"><%= project.members.length %> members added. <%= availableUsers.length %> users available to add.</p>
+        <div class="chips">
+          <% project.members.forEach((member) => { %>
+            <span><%= member.name %></span>
+          <% }) %>
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="button-link secondary-link" href="/projects/<%= project._id %>">Open</a>
+        <% if (currentUser.role === "admin") { %>
+        <form action="/projects/<%= project._id %>/members" method="post" class="compact-form inline-action">
+          <label>
+            Add available member
+            <select name="userId" required <%= availableUsers.length ? "" : "disabled" %>>
+              <% if (!availableUsers.length) { %>
+                <option value="">All users added</option>
+              <% } else { %>
+                <option value="">Select member</option>
+              <% } %>
+              <% availableUsers.forEach((user) => { %>
+              <option value="<%= user._id %>"><%= user.name %> (<%= user.email %>)</option>
+              <% }) %>
+            </select>
+          </label>
+          <button type="submit" <%= availableUsers.length ? "" : "disabled" %>>Add</button>
+        </form>
+        <% } %>
+      </div>
+    </article>
+  <% }) %>
+</section>
+
+<%- include("../partials/footer") %>

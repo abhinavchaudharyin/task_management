@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %> | Team Task Manager</title>
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <% if (currentUser) { %>
+      <div class="app-shell">
+        <aside class="sidebar">
+          <a class="brand" href="/dashboard">
+            <span class="brand-mark">TT</span>
+            <span>Team Task Manager</span>
+          </a>
+          <nav class="side-nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/projects">Projects</a>
+            <a href="/tasks">Tasks</a>
+          </nav>
+          <div class="sidebar-user">
+            <strong><%= currentUser.name %></strong>
+            <span><%= currentUser.role %></span>
+            <form action="/profile/status" method="post" class="status-form">
+              <select name="workStatus">
+                <option value="online" <%= currentUser.workStatus === "online" ? "selected" : "" %>>Online</option>
+                <option value="working" <%= currentUser.workStatus === "working" ? "selected" : "" %>>Working</option>
+                <option value="leave" <%= currentUser.workStatus === "leave" ? "selected" : "" %>>On leave</option>
+                <option value="offline" <%= currentUser.workStatus === "offline" ? "selected" : "" %>>Offline</option>
+              </select>
+              <input type="text" name="todayWorkSummary" value="<%= currentUser.todayWorkSummary || "" %>" placeholder="Today's work update">
+              <button type="submit">Update status</button>
+            </form>
+            <form action="/auth/logout" method="post">
+              <button type="submit" class="secondary-button">Logout</button>
+            </form>
+          </div>
+        </aside>
+        <div class="main-area">
+          <header class="mobile-topbar">
+            <a class="brand" href="/dashboard">
+              <span class="brand-mark">TT</span>
+              <span>Team Task Manager</span>
+            </a>
+            <nav>
+              <a href="/dashboard">Dashboard</a>
+              <a href="/projects">Projects</a>
+              <a href="/tasks">Tasks</a>
+            </nav>
+          </header>
+          <main class="container">
+          <aside class="team-panel">
+            <details>
+              <summary>
+                <span>Team status</span>
+                <strong><%= teamPanelUsers.filter((user) => user.workStatus !== "offline").length %> active</strong>
+              </summary>
+              <div class="team-panel-body">
+                <% teamPanelUsers.forEach((member) => { %>
+                  <article class="team-member-card">
+                    <div class="member-head">
+                      <div>
+                        <strong><%= member.name %></strong>
+                        <span><%= member.role %></span>
+                      </div>
+                      <span class="presence-dot presence-<%= member.workStatus %>"><%= member.workStatus === "leave" ? "leave" : member.workStatus %></span>
+                    </div>
+                    <p><%= member.todayWorkSummary || "No update yet" %></p>
+                    <% if (member.currentTask) { %>
+                      <div class="current-task-line">
+                        <span>Working on</span>
+                        <strong><%= member.currentTask.title %></strong>
+                      </div>
+                    <% } %>
+                    <div class="member-metrics">
+                      <span><strong><%= member.doneToday %></strong> done today</span>
+                      <span><strong><%= member.activeTasks %></strong> active</span>
+                    </div>
+                  </article>
+                <% }) %>
+              </div>
+            </details>
+          </aside>
+    <% } else { %>
+      <header class="topbar">
+        <a class="brand" href="/auth/login">
+          <span class="brand-mark">TT</span>
+          <span>Team Task Manager</span>
+        </a>
+        <nav>
+          <a href="/auth/login">Login</a>
+          <a href="/auth/signup">Signup</a>
+        </nav>
+      </header>
+      <main class="container">
+    <% } %>

@@ -1,0 +1,76 @@
+<%- include("../partials/header") %>
+
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Project detail</p>
+    <h1><%= project.name %></h1>
+    <p><%= project.description || "No description" %></p>
+  </div>
+  <a class="button-link secondary-link" href="/projects">Back to projects</a>
+</section>
+
+<section class="detail-grid">
+  <article class="panel">
+    <div class="section-title">
+      <div>
+        <h2>Progress</h2>
+        <p class="muted"><%= progress %>% complete</p>
+      </div>
+      <span class="count-badge"><%= tasks.length %> tasks</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-bar" style="width: <%= progress %>%"></div>
+    </div>
+  </article>
+
+  <article class="panel">
+    <h2>Members</h2>
+    <div class="chips">
+      <% project.members.forEach((member) => { %>
+        <span><%= member.name %></span>
+      <% }) %>
+    </div>
+  </article>
+</section>
+
+<section class="panel">
+  <div class="section-title">
+    <div>
+      <h2>Project tasks</h2>
+      <p class="muted">Tasks connected to this project.</p>
+    </div>
+  </div>
+
+  <% if (!tasks.length) { %>
+    <p class="empty">No tasks for this project.</p>
+  <% } %>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Assigned</th>
+          <th>Status</th>
+          <th>Due</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% tasks.forEach((task) => { %>
+          <% const assignedUsers = Array.isArray(task.assignedTo) ? task.assignedTo : [task.assignedTo].filter(Boolean); %>
+          <tr>
+            <td>
+              <strong><%= task.title %></strong>
+              <span><%= task.description || "No description" %></span>
+            </td>
+            <td><%= assignedUsers.length ? assignedUsers.map((user) => user.name).join(", ") : "Unknown" %></td>
+            <td><span class="status-pill status-<%= task.status.toLowerCase().replace(" ", "-") %>"><%= task.status %></span></td>
+            <td><%= task.dueDate.toISOString().slice(0, 10) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<%- include("../partials/footer") %>

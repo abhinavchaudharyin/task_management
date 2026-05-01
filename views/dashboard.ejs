@@ -1,0 +1,79 @@
+<%- include("partials/header") %>
+
+<section class="page-heading">
+  <div>
+    <h1>Dashboard</h1>
+    <p>Welcome, <%= currentUser.name %>. You are signed in as <%= currentUser.role %>.</p>
+  </div>
+</section>
+
+<section class="stats-grid">
+  <article class="stat-card">
+    <span>Total tasks</span>
+    <strong><%= stats.totalTasks %></strong>
+  </article>
+  <article class="stat-card">
+    <span>Todo</span>
+    <strong><%= stats.todoTasks %></strong>
+  </article>
+  <article class="stat-card">
+    <span>In Progress</span>
+    <strong><%= stats.inProgressTasks %></strong>
+  </article>
+  <article class="stat-card">
+    <span>Done</span>
+    <strong><%= stats.doneTasks %></strong>
+  </article>
+  <article class="stat-card danger">
+    <span>Overdue</span>
+    <strong><%= stats.overdueTasks %></strong>
+  </article>
+</section>
+
+<% if (myAdminRequest && currentUser.role !== "admin") { %>
+  <section class="panel notice-panel">
+    <h2>Admin request</h2>
+    <% if (myAdminRequest.status === "pending") { %>
+      <p class="muted">Your admin access request is waiting for approval from an existing admin.</p>
+    <% } else if (myAdminRequest.status === "rejected") { %>
+      <p class="muted">Your admin access request was rejected. Your member account is still active.</p>
+    <% } %>
+  </section>
+<% } %>
+
+<% if (currentUser.role === "admin") { %>
+  <section class="panel">
+    <div class="section-title">
+      <div>
+        <h2>Admin approval requests</h2>
+        <p class="muted">Approve users who requested admin access during signup.</p>
+      </div>
+      <span class="count-badge"><%= pendingAdminRequests.length %> pending</span>
+    </div>
+
+    <% if (!pendingAdminRequests.length) { %>
+      <p class="empty">No pending admin requests.</p>
+    <% } %>
+
+    <div class="list">
+      <% pendingAdminRequests.forEach((request) => { %>
+        <article class="approval-card">
+          <div>
+            <h3><%= request.user.name %></h3>
+            <p class="muted"><%= request.user.email %></p>
+          </div>
+          <div class="approval-actions">
+            <form action="/admin-requests/<%= request._id %>/approve" method="post">
+              <button type="submit">Approve</button>
+            </form>
+            <form action="/admin-requests/<%= request._id %>/reject" method="post">
+              <button type="submit" class="secondary-button">Reject</button>
+            </form>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+<% } %>
+
+<%- include("partials/footer") %>
