@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(attachUser);
 
-app.get("/", (req, res) => res.send("App Running"));
+app.get("/", (req, res) => res.redirect("/auth/login"));
 
 app.use("/auth", authRoutes);
 app.use("/dashboard", dashboardRoutes);
