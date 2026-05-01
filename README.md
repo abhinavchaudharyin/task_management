@@ -1,98 +1,179 @@
-# Team Task Manager
+# 🚀 Team Task Manager
 
-A production-ready Team Task Manager built with Node.js, Express, MongoDB Atlas, EJS, JWT cookies, and bcrypt password hashing.
+![Node.js](https://img.shields.io/badge/Node.js-Backend-green)
+![Express](https://img.shields.io/badge/Express.js-Framework-black)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
+![JWT](https://img.shields.io/badge/Auth-JWT-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## Features
+A production-ready **Team Task Manager** built with **Node.js, Express, MongoDB Atlas, EJS, JWT cookies, and bcrypt password hashing**.
 
-- Signup and login
-- JWT auth stored in HTTP-only cookies
-- Password hashing with bcrypt
-- Admin role: create projects, add members, assign tasks
-- Member role: view assigned tasks and update status
-- Dashboard with total tasks, status counts, and overdue tasks
-- Signup account type selection for member or admin
-- Members are active immediately
-- First admin is approved automatically; later admin requests appear on the admin dashboard for approval
-- Responsive sidebar/mobile navigation
-- Task search and filters by status, project, and assignee
-- Project detail page with progress and project tasks
-- Admin task edit and delete actions
-- Team status panel scoped to the current admin's project members
-- Start/stop work tracking so admins can see the exact task a member is working on
+---
 
-## Local Setup
+## ✨ Features
 
-1. Install dependencies:
+- 🔐 Secure Authentication (JWT + HTTP-only cookies)
+- 👥 Role-based access (**Admin / Member**)
+- 📊 Dashboard with task insights & overdue tracking
+- 📁 Project management system
+- ✅ Task assignment, status updates, and tracking
+- 🔍 Advanced filtering & search
+- ⏱️ Start/Stop work tracking
+- 📱 Responsive UI with sidebar navigation
+- 🛡️ Admin approval workflow
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer        | Technology |
+|-------------|------------|
+| Backend     | Node.js, Express |
+| Database    | MongoDB Atlas |
+| Frontend    | EJS |
+| Auth        | JWT (cookies) |
+| Security    | bcryptjs |
+
+---
+
+## ⚙️ How It Works
+
+### 🔐 Authentication
+- Passwords hashed using `bcryptjs`
+- JWT stored in HTTP-only cookies
+- Middleware protects routes
+
+### 👤 Roles
+
+#### 🧑‍💼 Admin
+- Manage projects & members
+- Assign & manage tasks
+- Review admin requests
+
+#### 👨‍💻 Member
+- View assigned tasks
+- Update task status
+- Track working time
+
+---
+
+## 🔄 Admin Approval Workflow
+
+1. User selects **Admin** during signup  
+2. Created as **Member** initially  
+3. `AdminRequest` is generated  
+4. Admin reviews request  
+5. Approval → Role upgraded  
+
+---
+
+## 🗂️ Data Models
+
+### User
+- `name`
+- `email`
+- `password`
+- `role`
+
+### Project
+- `name`
+- `description`
+- `members[]`
+- `createdBy`
+
+### Task
+- `title`
+- `description`
+- `status`
+- `dueDate`
+- `assignedTo`
+- `projectId`
+- `createdBy`
+
+### AdminRequest
+- `requestedBy`
+- `reason`
+- `status`
+- `reviewedBy`
+- `reviewedAt`
+
+---
+
+## 📡 API Routes
+
+**Base Path:** `/api`
+
+### 🔐 Auth
+- `POST /auth/signup`
+- `POST /auth/login`
+- `GET /auth/me`
+
+### 📁 Projects
+- `GET /projects`
+- `POST /projects`
+- `GET /projects/:id`
+- `POST /projects/:id/members`
+- `DELETE /projects/:id/members/:memberId`
+- `DELETE /projects/:id`
+
+### ✅ Tasks
+- `GET /tasks/dashboard/summary`
+- `GET /tasks`
+- `GET /tasks/:id`
+- `POST /tasks`
+- `PUT /tasks/:id`
+- `PATCH /tasks/:id/status`
+- `DELETE /tasks/:id`
+
+### 🛡️ Admin Requests
+- `GET /admin-requests`
+- `GET /admin-requests/mine`
+- `PATCH /admin-requests/:id/review`
+
+---
+
+## 🧪 Demo Accounts
+
+| Role   | Email               | Password     |
+|--------|---------------------|--------------|
+| Admin  | admin@gmail.com     | `123456` |
+| Member | member@gmail.com    | `123456` |
+
+---
+
+## 💻 Local Setup
 
 ```bash
+# Install dependencies
 npm install
-```
 
-2. Create `.env` from `.env.example`:
-
-```bash
+# Create .env file
 MONGO_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_long_random_secret
-```
 
-3. Start the app:
-
-```bash
+# Start server
 npm start
 ```
 
-4. Optional: add demo data:
+---
 
-```bash
-npm run seed
-```
+## ⚠️ Common Issues
 
-Demo login password for all demo accounts:
+### MongoDB Connection Error
+- Make sure your MongoDB Atlas cluster is running  
+- Whitelist your IP address (`0.0.0.0/0` for testing)
 
-```text
-Demo@12345
-```
+### JWT Error
+- Ensure `JWT_SECRET` is defined in `.env`
 
-Demo accounts:
-
-```text
-admin@demo.com
-asha@demo.com
-rohan@demo.com
-pending-admin@demo.com
-```
-
-5. Open:
-
-```text
-http://localhost:5000
-```
-
-The root route returns `App Running`. App pages are available at `/auth/signup`, `/auth/login`, `/dashboard`, `/projects`, and `/tasks`.
-
-## Railway Deployment
-
-1. Push this project to GitHub.
-2. Create a new Railway project and choose **Deploy from GitHub repo**.
-3. Add these Railway variables:
-
-```bash
-MONGO_URI=your_mongodb_atlas_connection_string
-JWT_SECRET=your_long_random_secret
-NODE_ENV=production
-```
-
-4. Railway will run:
-
-```bash
-npm install
-npm start
-```
-
-5. The app listens with:
-
+### Port Already in Use
+Update your server port:
 ```js
-app.listen(process.env.PORT || 5000)
+const PORT = process.env.PORT || 5000;
 ```
 
-No build command is required.
+---
+
+## ❤️ Author
+
+Made with ❤️ by **Abhinav**
