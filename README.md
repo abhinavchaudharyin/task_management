@@ -1,4 +1,4 @@
-# 🚀 Team Task Manager
+# Team Task Manager
 
 ![Node.js](https://img.shields.io/badge/Node.js-Backend-green)
 ![Express](https://img.shields.io/badge/Express.js-Framework-black)
@@ -10,21 +10,21 @@ A production-ready **Team Task Manager** built with **Node.js, Express, MongoDB 
 
 ---
 
-## ✨ Features
+## Features
 
-- 🔐 Secure Authentication (JWT + HTTP-only cookies)
-- 👥 Role-based access (**Admin / Member**)
-- 📊 Dashboard with task insights & overdue tracking
-- 📁 Project management system
-- ✅ Task assignment, status updates, and tracking
-- 🔍 Advanced filtering & search
-- ⏱️ Start/Stop work tracking
-- 📱 Responsive UI with sidebar navigation
-- 🛡️ Admin approval workflow
+-  Secure Authentication (JWT + HTTP-only cookies)
+- Role-based access (**Admin / Member**)
+- Dashboard with task insights & overdue tracking
+- Project management system
+- Task assignment, status updates, and tracking
+- Advanced filtering & search
+- Start/Stop work tracking
+- Responsive UI with sidebar navigation
+- Admin approval workflow
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer        | Technology |
 |-------------|------------|
@@ -36,28 +36,28 @@ A production-ready **Team Task Manager** built with **Node.js, Express, MongoDB 
 
 ---
 
-## ⚙️ How It Works
+## How It Works
 
-### 🔐 Authentication
+### Authentication
 - Passwords hashed using `bcryptjs`
 - JWT stored in HTTP-only cookies
 - Middleware protects routes
 
-### 👤 Roles
+### Roles
 
-#### 🧑‍💼 Admin
+#### Admin
 - Manage projects & members
 - Assign & manage tasks
 - Review admin requests
 
-#### 👨‍💻 Member
+#### Member
 - View assigned tasks
 - Update task status
 - Track working time
 
 ---
 
-## 🔄 Admin Approval Workflow
+## Admin Approval Workflow
 
 1. User selects **Admin** during signup  
 2. Created as **Member** initially  
@@ -67,7 +67,7 @@ A production-ready **Team Task Manager** built with **Node.js, Express, MongoDB 
 
 ---
 
-## 🗂️ Data Models
+## Data Models
 
 ### User
 - `name`
@@ -103,12 +103,12 @@ A production-ready **Team Task Manager** built with **Node.js, Express, MongoDB 
 
 **Base Path:** `/api`
 
-### 🔐 Auth
+### Auth
 - `POST /auth/signup`
 - `POST /auth/login`
 - `GET /auth/me`
 
-### 📁 Projects
+### Projects
 - `GET /projects`
 - `POST /projects`
 - `GET /projects/:id`
@@ -116,7 +116,7 @@ A production-ready **Team Task Manager** built with **Node.js, Express, MongoDB 
 - `DELETE /projects/:id/members/:memberId`
 - `DELETE /projects/:id`
 
-### ✅ Tasks
+### Tasks
 - `GET /tasks/dashboard/summary`
 - `GET /tasks`
 - `GET /tasks/:id`
@@ -125,14 +125,14 @@ A production-ready **Team Task Manager** built with **Node.js, Express, MongoDB 
 - `PATCH /tasks/:id/status`
 - `DELETE /tasks/:id`
 
-### 🛡️ Admin Requests
+### Admin Requests
 - `GET /admin-requests`
 - `GET /admin-requests/mine`
 - `PATCH /admin-requests/:id/review`
 
 ---
 
-## 🧪 Demo Accounts
+## Demo Accounts
 
 | Role   | Email               | Password     |
 |--------|---------------------|--------------|
@@ -141,7 +141,7 @@ A production-ready **Team Task Manager** built with **Node.js, Express, MongoDB 
 
 ---
 
-## 💻 Local Setup
+## Local Setup
 
 ```bash
 # Install dependencies
@@ -157,7 +157,7 @@ npm start
 
 ---
 
-## ⚠️ Common Issues
+##  Common Issues
 
 ### MongoDB Connection Error
 - Make sure your MongoDB Atlas cluster is running  
@@ -174,6 +174,6 @@ const PORT = process.env.PORT || 5000;
 
 ---
 
-## ❤️ Author
+##  Author
 
-Made with ❤️ by **Abhinav**
+Made with  by **Abhinav**
